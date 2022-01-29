@@ -1,32 +1,20 @@
+import { Form, useTransition } from "remix";
+
 export default function Index() {
+  const transition = useTransition()
+  const isSearching = transition.state === 'submitting'
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
+    <div>
+      <h1>remix-spotify-explorer</h1>
+      <p>A basic Remix app to play around with CDN caching.</p>
+      <p>If you're viewing this on the 'fastly.com' domain, and you go to a page that someone else has gone to, it will be super quick!</p>
+      <h2>
+        Search
+      </h2>
+      <Form action="/search">
+            <input type="text" name="q" />
+            <button disabled={isSearching}>{isSearching ? 'Searching...' : 'Search'}</button>
+        </Form>
     </div>
   );
 }

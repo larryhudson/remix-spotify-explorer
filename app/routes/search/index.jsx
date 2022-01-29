@@ -1,9 +1,11 @@
-import { Form, Link, useLoaderData, useTransition } from "remix";
+import { Form, json, Link, useLoaderData, useTransition } from "remix";
 import { fetchFromSpotify } from "~/utils/spotify.server";
 
 export const loader = async ({request}) => {
     const searchParams = Object.fromEntries(new URL(request.url).searchParams)
     const {q} = searchParams
+
+    if (typeof q === 'undefined') return null
 
     const spotifyData = await fetchFromSpotify({
         url: `search`,
@@ -13,7 +15,11 @@ export const loader = async ({request}) => {
         }
     })
 
-    return {...spotifyData, q}
+    json
+
+    return json({...spotifyData, q}, {headers: {
+        'Cache-Control': 'public, max-age=3600'
+    }})
 }
 
 export const headers = () => {
@@ -73,11 +79,12 @@ export default function SearchPage() {
     const artists = spotifyData?.artists?.items
     const transition = useTransition()
     const isSearching = transition.state === 'submitting'
+    const query = spotifyData?.q ?? ''
 
     return <div>
         <h1>Search</h1>
         <Form>
-            <input type="text" name="q" defaultValue={spotifyData.q} />
+            <input type="text" name="q" defaultValue={query} />
             <button disabled={isSearching}>{isSearching ? 'Searching...' : 'Search'}</button>
         </Form>
         {albums && (
